@@ -12,12 +12,12 @@ import { user } from "../user/user.schema";
 
 export const planTierEnum = pgEnum("plan_tier", ["starter", "pro", "business"]);
 
-export const planIntervalEnum = pgEnum("plan_interval", ["monthly", "yearly"]);
-
 export interface PlanFeatures {
   maxProducts: number | null;
   maxStores: number | null;
   maxStaff: number | null;
+  maxCofounders: number | null;
+  maxBranches: number | null;
   creditLedger: boolean;
   automatedSmsReminders: boolean;
   whatsappReminders: boolean;
@@ -53,8 +53,5 @@ export const plans = pgTable("plans", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-export const planRelations = relations(plans, ({ many }) => ({
-  users: many(user),
-}));
 export type Plan = typeof plans.$inferSelect;
 export type NewPlan = typeof plans.$inferInsert;

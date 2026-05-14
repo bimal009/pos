@@ -5,78 +5,15 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1778655663733,
-      "tag": "0000_cold_the_hand",
+      "when": 1778749219228,
+      "tag": "0000_slow_kingpin",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1778659560827,
-      "tag": "0001_clever_roulette",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1778660333478,
-      "tag": "0002_tidy_captain_america",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1778661543412,
-      "tag": "0003_orange_screwball",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1778663528250,
-      "tag": "0004_married_black_knight",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1778663619786,
-      "tag": "0005_public_betty_ross",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1778667447461,
-      "tag": "0006_wandering_speed_demon",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1778667460110,
-      "tag": "0007_curly_colossus",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "7",
-      "when": 1778669568192,
-      "tag": "0008_acoustic_rumiko_fujikawa",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "7",
-      "when": 1778674616446,
-      "tag": "0009_clean_lucky_pierre",
-      "breakpoints": true
-    },
-    {
-      "idx": 10,
-      "version": "7",
-      "when": 1778678290576,
-      "tag": "0010_lying_blink",
+      "when": 1778749405648,
+      "tag": "0001_wakeful_dorian_gray",
       "breakpoints": true
     }
   ]

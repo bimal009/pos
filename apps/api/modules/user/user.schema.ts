@@ -1,13 +1,10 @@
-import { plans, planTierEnum } from "./../plans/plans.schema";
 import { relations } from "drizzle-orm";
 import { stores } from "../stores/stores.schema";
+import { userPlans } from "../plans/user-plans.schema";
 import { boolean, pgEnum, pgTable, text, timestamp } from "drizzle-orm/pg-core";
-export const roleEnum = pgEnum("role", [
-  "individual",
-  "company",
-  "user",
-  "admin",
-]);
+
+export const platformRoleEnum = pgEnum("platform_role", ["superadmin", "user"]);
+export const userTypeEnum = pgEnum("user_type", ["individual", "company"]);
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -17,16 +14,16 @@ export const user = pgTable("user", {
   phoneNumber: text("phoneNumber").unique(),
   phoneNumberVerified: boolean("phoneNumberVerified"),
   image: text("image"),
-  role: roleEnum("role").notNull().default("user"),
+
+  userType: userTypeEnum("user_type").notNull().default("individual"),
+  platformRole: platformRoleEnum("platform_role"),
   isOnboarded: boolean("is_onboarded").notNull().default(false),
-  plan: planTierEnum("plan").notNull().default("starter"),
+
   createdAt: timestamp("createdAt").notNull(),
   updatedAt: timestamp("updatedAt").notNull(),
 });
-export const userRelations = relations(user, ({ many, one }) => ({
+
+export const userRelations = relations(user, ({ many }) => ({
   stores: many(stores),
-  plan: one(plans, {
-    fields: [user.plan],
-    references: [plans.tier],
-  }),
+  plans: many(userPlans),
 }));

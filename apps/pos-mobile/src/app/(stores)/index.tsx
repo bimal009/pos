@@ -28,6 +28,8 @@ import { StoreSkeleton } from "@/components/StoreSkeleton";
 import { BranchesModal } from "@/components/BranchesModal";
 import { useGetStores } from "@/client/store";
 import { Branch, Store } from "@/types/stores";
+import { getSession } from "@/lib/session";
+import { useGetSession } from "@/client/session";
 
 // ─── Feature list shown on empty state ───────────────────────────────────────
 
@@ -150,10 +152,7 @@ export default function StoresScreen() {
   const isDark = scheme === "dark";
   const C = isDark ? Colors.dark : Colors.light;
   const s = useMemo(() => makeStyles(C, isDark), [C, isDark]);
-
-  const [session, setSession] = useState<Awaited<
-    ReturnType<typeof authClient.getSession>
-  > | null>(null);
+  const { data } = useGetSession();
 
   const { data: stores, isLoading, isFetching, refetch } = useGetStores();
 
@@ -171,8 +170,6 @@ export default function StoresScreen() {
   useEffect(() => {
     authClient.getSession().then(setSession);
   }, []);
-
-  // ─── Store actions ───────────────────────────────────────────────────────────
 
   const handleEditStore = useCallback((store: Store) => {
     router.push({ pathname: "/(stores)/edit/[id]", params: { id: store.id } });
@@ -204,8 +201,6 @@ export default function StoresScreen() {
     setSelectedStore(store);
     setShowBranchesModal(true);
   }, []);
-
-  // ─── Branch actions ──────────────────────────────────────────────────────────
 
   const handleAddBranch = useCallback((storeId: string) => {
     setShowBranchesModal(false);

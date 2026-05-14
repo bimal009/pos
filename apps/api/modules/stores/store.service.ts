@@ -1,17 +1,16 @@
 import { FastifyInstance } from "fastify";
-import { db } from "../../plugins/db";
 import { stores, storeCategories, NewStore } from "./stores.schema";
-import { eq } from "drizzle-orm";
 
 export async function insertStore(
+  fastify: FastifyInstance,
   data: NewStore & { categoriesId?: string[] },
 ) {
   const { categoriesId, ...storeData } = data;
 
-  const [store] = await db.insert(stores).values(storeData).returning();
+  const [store] = await fastify.db.insert(stores).values(storeData).returning();
 
   if (categoriesId && categoriesId.length > 0) {
-    await db.insert(storeCategories).values(
+    await fastify.db.insert(storeCategories).values(
       categoriesId.map((categoryId) => ({
         storeId: store.id,
         categoryId,

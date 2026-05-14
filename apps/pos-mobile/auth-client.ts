@@ -11,19 +11,36 @@ export const authClient = createAuthClient({
     phoneNumberClient(),
     inferAdditionalFields({
       user: {
-        role: {
-          type: "string",
+        userType: {
+          type: "string" as const, // "individual" | "company"
+        },
+        platformRole: {
+          type: "string" as const, // "superadmin" | null
         },
         isOnboarded: {
-          type: "boolean",
+          type: "boolean" as const,
         },
         plan: {
-          type: "string",
+          type: "string" as const, // "starter" | "pro" | "business"
+        },
+        phoneNumber: {
+          type: "string" as const,
+        },
+        phoneNumberVerified: {
+          type: "boolean" as const,
+        },
+        image: {
+          type: "string" as const,
         },
       },
     }),
   ],
 });
 
-/** Session + user shape from this client (includes `inferAdditionalFields` on user). */
 export type AuthSession = typeof authClient.$Infer.Session;
+export type AuthUser = AuthSession["user"];
+
+export type UserPlan = "starter" | "pro" | "business";
+export type UserType = "individual" | "company";
+export type PlatformRole = "superadmin" | null;
+export type StoreRole = "owner" | "cofounder" | "manager" | "cashier";

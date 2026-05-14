@@ -11,11 +11,18 @@ export const auth = betterAuth({
   basePath: "/api/v1/auth",
   user: {
     additionalFields: {
-      role: {
-        type: "string",
+      userType: {
+        type: "string", // "individual" | "company"
+        input: true,
+        returned: true,
+      },
+      platformRole: {
+        type: "string", // "superadmin" | null
         input: false,
         returned: true,
       },
+
+      // Onboarding & plan
       isOnboarded: {
         type: "boolean",
         input: true,
@@ -24,6 +31,22 @@ export const auth = betterAuth({
       plan: {
         type: "string",
         input: false,
+        returned: true,
+      },
+
+      phoneNumber: {
+        type: "string",
+        input: true,
+        returned: true,
+      },
+      phoneNumberVerified: {
+        type: "boolean",
+        input: false,
+        returned: true,
+      },
+      image: {
+        type: "string",
+        input: true,
         returned: true,
       },
     },
@@ -39,13 +62,18 @@ export const auth = betterAuth({
     window: 60,
     max: 5,
   },
-
   plugins: [
     phoneNumber({
-      sendOTP: ({ phoneNumber, code }) => {
+      sendOTP: async ({ phoneNumber, code }) => {
+        // TODO: replace with Sparrow SMS in production
         console.log(`OTP ${code} → ${phoneNumber}`);
-      },
 
+        // Production:
+        // await sparrowSms.send({
+        //   to: phoneNumber,
+        //   message: `Tapako SME POS verification code: ${code}. 5 minutema expire huncha.`,
+        // });
+      },
       otpLength: 6,
       expiresIn: 300,
       requireVerification: true,
@@ -55,9 +83,17 @@ export const auth = betterAuth({
       },
     }),
   ],
-
   logger: {
-    level: "debug",
+    level: env.NODE_ENV === "production" ? "error" : "debug",
   },
-  trustedOrigins: ["http://localhost:3000", "myapp://"],
+  trustedOrigins: [
+    "http://localhost:3000", // web dev
+    "http://localhost:8081", // expo dev
+    "myapp://", // expo deep link
+    // env.WEB_APP_URL, // production web
+    // env.MOBILE_APP_URL, // production mobile deep link
+  ],
 });
+
+export type Auth = typeof auth;
+export type Session = typeof auth.$Infer.Session;

@@ -20,7 +20,6 @@ import ImageUpload from "@/components/ImageUpload";
 import { CreateStore } from "@/types/stores";
 import { router } from "expo-router";
 import { useCreateStore } from "@/client/store";
-import { authClient } from "../../../../auth-client";
 
 type MCIcon = keyof typeof MaterialCommunityIcons.glyphMap;
 type TaxType = "none" | "pan" | "vat";

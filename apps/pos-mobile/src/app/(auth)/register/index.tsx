@@ -21,8 +21,6 @@ import { authClient } from "../../../../auth-client";
 
 const theme = Colors.light;
 
-type Role = "individual" | "company";
-
 interface ProfileFormValues {
   name: string;
 }
@@ -114,7 +112,7 @@ export default function RegisterProfile() {
         isOnboarded: true,
       });
       if (res.data?.status) {
-        router.replace("/(stores)");
+        router.replace("/(stores)/create");
       }
     } catch (error) {
       console.error(error);

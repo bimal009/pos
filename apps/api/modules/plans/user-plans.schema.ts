@@ -1,7 +1,9 @@
 import { relations } from "drizzle-orm";
-import { plans, planTierEnum, planIntervalEnum } from "../plans/plans.schema";
+import { plans } from "../plans/plans.schema";
 import { pgTable, text, timestamp, pgEnum } from "drizzle-orm/pg-core";
 import { user } from "../user/user.schema";
+
+export const planIntervalEnum = pgEnum("plan_interval", ["monthly", "yearly"]);
 
 export const planStatusEnum = pgEnum("plan_status", [
   "active",
@@ -19,7 +21,9 @@ export const userPlans = pgTable("user_plans", {
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
 
-  planTier: planTierEnum("plan_tier").notNull().default("starter"),
+  planId: text("plan_id")
+    .notNull()
+    .references(() => plans.id, { onDelete: "restrict" }),
 
   interval: planIntervalEnum("plan_interval"),
 
@@ -39,8 +43,8 @@ export const userPlanRelations = relations(userPlans, ({ one }) => ({
     references: [user.id],
   }),
   plan: one(plans, {
-    fields: [userPlans.planTier],
-    references: [plans.tier],
+    fields: [userPlans.planId],
+    references: [plans.id],
   }),
 }));
 

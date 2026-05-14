@@ -11,6 +11,12 @@ import { relations } from "drizzle-orm";
 import { categories } from "../categories/categories.schema";
 import { user } from "../user/user.schema";
 import { storeBranches } from "./branches.schema";
+export const shopRoleEnum = pgEnum("shop_role", [
+  "owner",
+  "cofounder",
+  "manager",
+  "cashier",
+]);
 export const taxTypeEnum = pgEnum("tax_type", [
   "none", // no registration
   "pan", // PAN only — simple bill, no VAT
@@ -59,17 +65,31 @@ export const storeCategories = pgTable(
   ],
 );
 
-export const storeCategoryRelations = relations(
-  storeCategories,
-  ({ one }) => ({
-    store: one(stores, {
-      fields: [storeCategories.storeId],
-      references: [stores.id],
-    }),
-    category: one(categories, {
-      fields: [storeCategories.categoryId],
-      references: [categories.id],
-    }),
+export const storeCategoryRelations = relations(storeCategories, ({ one }) => ({
+  store: one(stores, {
+    fields: [storeCategories.storeId],
+    references: [stores.id],
+  }),
+  category: one(categories, {
+    fields: [storeCategories.categoryId],
+    references: [categories.id],
+  }),
+}));
+
+export const storeMembers = pgTable(
+  "store_members",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    storeId: text("store_id")
+      .notNull()
+      .references(() => stores.id, { onDelete: "cascade" }),
+    role: shopRoleEnum("role").notNull().default("cashier"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (t) => ({
+    pk: primaryKey({ columns: [t.userId, t.storeId] }),
   }),
 );
 

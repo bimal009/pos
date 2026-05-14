@@ -8,6 +8,7 @@ import categoriesRoutes from "./modules/categories/categories.routes";
 import storeRoutes from "./modules/stores/store.routes";
 import imagesRoutes from "./modules/images/images.routes";
 import plansRoutes from "./modules/plans/plans.routes";
+import userRoutes from "./modules/user/user.routes";
 
 const app = Fastify({
   logger: true,
@@ -33,6 +34,7 @@ app.register(fastifyCors, {
 app.register(dbPlugin);
 
 app.register(authRoutes, { prefix: "/api/v1/auth" });
+app.register(userRoutes, { prefix: "/api/v1/user" });
 app.register(categoriesRoutes, { prefix: "/api/v1/categories" });
 app.register(storeRoutes, { prefix: "/api/v1/stores" });
 app.register(imagesRoutes, { prefix: "/api/v1/images" });
