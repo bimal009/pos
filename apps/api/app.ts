@@ -34,7 +34,7 @@ app.register(fastifyCors, {
 app.register(dbPlugin);
 
 app.register(authRoutes, { prefix: "/api/v1/auth" });
-app.register(userRoutes, { prefix: "/api/v1/user" });
+app.register(userRoutes, { prefix: "/api/v1/users" });
 app.register(categoriesRoutes, { prefix: "/api/v1/categories" });
 app.register(storeRoutes, { prefix: "/api/v1/stores" });
 app.register(imagesRoutes, { prefix: "/api/v1/images" });

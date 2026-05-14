@@ -22,6 +22,7 @@ interface ImageUploadProps {
   onChange: (url: string) => void;
   folder?: string;
   size?: number;
+  title?: string;
 }
 
 async function uploadToImageKit(
@@ -66,6 +67,7 @@ export default function ImageUpload({
   onChange,
   folder = "/avatars",
   size = 96,
+  title = "Add Profile Picture",
 }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false);
   const { data: sign, isLoading: signLoading } = useGetImageKitAuthSign();
@@ -159,7 +161,7 @@ export default function ImageUpload({
           ? "Uploading..."
           : value
             ? "Tap to change photo"
-            : "Add profile photo (optional)"}
+            : `${title} (optional)`}
       </Text>
     </View>
   );

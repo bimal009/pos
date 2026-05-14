@@ -1,5 +1,3 @@
-"use client";
-
 import { onboardUser } from "@/api/user";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -8,7 +6,6 @@ export const useOnboardUser = () => {
 
   return useMutation({
     mutationFn: onboardUser,
-
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["users"],

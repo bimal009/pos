@@ -1,16 +1,15 @@
 import { ApiResponse } from "@/types/response";
 import api from "../../axios";
 
-export const onboardUser = async () => {
-  try {
-    const response = await api.post<ApiResponse<{ id: string }>>(
-      "/api/v1/users/onboard",
-    );
-
-    return response.data;
-  } catch (error) {
-    console.error("Failed to onboard user:", error);
-
-    return null;
-  }
+export type OnboardUser = {
+  name: string;
+  email?: string;
+  image?: string;
+};
+export const onboardUser = async (data: OnboardUser) => {
+  const response = await api.patch<ApiResponse<{ id: string }>>(
+    "/api/v1/users/onboard",
+    data,
+  );
+  return response.data;
 };

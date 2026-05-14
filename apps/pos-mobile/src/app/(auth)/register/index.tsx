@@ -17,17 +17,18 @@ import { Colors, Fonts, Radius, Spacing, Ui } from "@/constants/theme";
 import { router } from "expo-router";
 import { useForm, Controller } from "react-hook-form";
 import ImageUpload from "@/components/ImageUpload";
-import { authClient } from "../../../../auth-client";
+import { useOnboardUser } from "@/client/user";
 
 const theme = Colors.light;
 
 interface ProfileFormValues {
   name: string;
+  email?: string;
 }
 
 export default function RegisterProfile() {
   const [imageUrl, setImageUrl] = useState<string | undefined>();
-  const [submitting, setSubmitting] = useState(false);
+  const { mutateAsync: onboardUser, isPending: submitting } = useOnboardUser();
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(30)).current;
@@ -42,7 +43,7 @@ export default function RegisterProfile() {
     handleSubmit,
     formState: { errors },
   } = useForm<ProfileFormValues>({
-    defaultValues: { name: "" },
+    defaultValues: { name: "", email: undefined },
   });
 
   useEffect(() => {
@@ -104,20 +105,15 @@ export default function RegisterProfile() {
     ]).start();
 
     try {
-      setSubmitting(true);
-
-      const res = await authClient.updateUser({
+      const res = await onboardUser({
         name: data.name,
+        ...(data.email && { email: data.email }),
         ...(imageUrl && { image: imageUrl }),
-        isOnboarded: true,
       });
-      if (res.data?.status) {
-        router.replace("/(stores)/create");
-      }
+      console.log(res.message);
+      router.replace("/(stores)/create");
     } catch (error) {
       console.error(error);
-    } finally {
-      setSubmitting(false);
     }
   };
 
@@ -218,6 +214,51 @@ export default function RegisterProfile() {
                 />
                 {errors.name && (
                   <Text style={styles.errorText}>{errors.name.message}</Text>
+                )}
+              </Animated.View>
+
+              {/* Email */}
+              <Animated.View
+                style={{
+                  opacity: field2Anim,
+                  transform: [
+                    {
+                      translateY: field2Anim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [20, 0],
+                      }),
+                    },
+                  ],
+                }}
+              >
+                <Text style={styles.label}>
+                  Email <Text style={styles.optional}>(Optional)</Text>
+                </Text>
+                <Controller
+                  control={control}
+                  name="email"
+                  rules={{
+                    pattern: {
+                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                      message: "Enter a valid email address",
+                    },
+                  }}
+                  render={({ field: { onChange, onBlur, value } }) => (
+                    <TextInput
+                      style={[styles.input, errors.email && styles.inputError]}
+                      placeholder="Enter your email"
+                      placeholderTextColor={theme.mutedForeground}
+                      onBlur={onBlur}
+                      onChangeText={onChange}
+                      value={value ?? ""}
+                      autoCapitalize="none"
+                      keyboardType="email-address"
+                      returnKeyType="done"
+                    />
+                  )}
+                />
+                {errors.email && (
+                  <Text style={styles.errorText}>{errors.email.message}</Text>
                 )}
               </Animated.View>
             </View>
