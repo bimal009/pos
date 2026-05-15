@@ -1,6 +1,6 @@
 import { relations } from "drizzle-orm";
 import { stores } from "../stores/stores.schema";
-import { userPlans } from "../plans/user-plans.schema";
+import { userPlans } from "../user-plans/user-plans.schema";
 import { boolean, pgEnum, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 
 export const platformRoleEnum = pgEnum("platform_role", ["superadmin", "user"]);

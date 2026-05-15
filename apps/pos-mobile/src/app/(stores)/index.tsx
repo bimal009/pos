@@ -1,13 +1,7 @@
 import { Colors, Radius, Spacing } from "@/constants/theme";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -22,16 +16,12 @@ import {
   Animated,
   ListRenderItemInfo,
 } from "react-native";
-import { authClient } from "../../../auth-client";
 import { StoreCard } from "@/components/StoreCard";
 import { StoreSkeleton } from "@/components/StoreSkeleton";
 import { BranchesModal } from "@/components/BranchesModal";
 import { useGetStores } from "@/client/store";
 import { Branch, Store } from "@/types/stores";
-import { getSession } from "@/lib/session";
 import { useGetSession } from "@/client/session";
-
-// ─── Feature list shown on empty state ───────────────────────────────────────
 
 const FEATURES = [
   {
@@ -56,15 +46,11 @@ const FEATURES = [
   },
 ] as const;
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
 type ListItem =
   | { type: "header"; key: string }
   | { type: "store"; key: string; store: Store }
   | { type: "empty"; key: string }
   | { type: "footer"; key: string };
-
-// ─── Sub-components ──────────────────────────────────────────────────────────
 
 interface HeaderProps {
   userName: string;
@@ -152,7 +138,7 @@ export default function StoresScreen() {
   const isDark = scheme === "dark";
   const C = isDark ? Colors.dark : Colors.light;
   const s = useMemo(() => makeStyles(C, isDark), [C, isDark]);
-  const { data } = useGetSession();
+  const { data: session } = useGetSession();
 
   const { data: stores, isLoading, isFetching, refetch } = useGetStores();
 
@@ -167,8 +153,11 @@ export default function StoresScreen() {
     extrapolate: "clamp",
   });
 
-  useEffect(() => {
-    authClient.getSession().then(setSession);
+  const handleOpenStore = useCallback((store: Store) => {
+    router.push({
+      pathname: "/(stores)/[id]",
+      params: { id: store.id },
+    });
   }, []);
 
   const handleEditStore = useCallback((store: Store) => {
@@ -273,6 +262,7 @@ export default function StoresScreen() {
             <View style={s.storeItemWrapper}>
               <StoreCard
                 store={item.store}
+                onPress={handleOpenStore}
                 onEdit={handleEditStore}
                 onDelete={handleDeleteStore}
                 onManageBranches={handleManageBranches}
@@ -292,6 +282,7 @@ export default function StoresScreen() {
       C,
       s,
       isDark,
+      handleOpenStore,
       handleEditStore,
       handleDeleteStore,
       handleManageBranches,
@@ -304,7 +295,7 @@ export default function StoresScreen() {
 
   const avatarText = useMemo(() => {
     return (
-      session?.data?.user.name
+      session?.user.name
         ?.split(/\s+/)
         .filter((w: string) => w.length > 0)
         .map((word: string) => word[0]!.toUpperCase())
@@ -314,7 +305,7 @@ export default function StoresScreen() {
   }, [session]);
 
   const firstName = useMemo(
-    () => session?.data?.user.name?.split(/\s+/)[0] || "Guest",
+    () => session?.user.name?.split(/\s+/)[0] || "Guest",
     [session],
   );
 
@@ -381,7 +372,6 @@ export default function StoresScreen() {
           />
         )}
 
-        {/* CTA footer – only when empty */}
         {(!stores || stores.length === 0) && !isLoading && (
           <View style={s.footer}>
             <TouchableOpacity

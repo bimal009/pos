@@ -15,6 +15,7 @@ import {
 
 interface StoreCardProps {
   store: Store;
+  onPress: (store: Store) => void;
   onEdit: (store: Store) => void;
   onDelete: (store: Store) => void;
   onManageBranches: (store: Store) => void;
@@ -22,6 +23,7 @@ interface StoreCardProps {
 
 export const StoreCard: React.FC<StoreCardProps> = ({
   store,
+  onPress,
   onEdit,
   onDelete,
   onManageBranches,
@@ -76,62 +78,69 @@ export const StoreCard: React.FC<StoreCardProps> = ({
       ]}
     >
       {/* ── Card Header ─────────────────────────────────────────────── */}
-      <TouchableOpacity
-        activeOpacity={0.75}
-        onPress={toggleExpand}
-        style={styles.header}
-      >
-        {/* Logo */}
-        <View
-          style={[
-            styles.logo,
-            {
-              backgroundColor: isDark
-                ? C.backgroundElement
-                : C.primaryForeground,
-            },
-          ]}
+      <View style={styles.header}>
+        <TouchableOpacity
+          activeOpacity={0.75}
+          onPress={() => onPress(store)}
+          style={styles.headerMain}
         >
-          <Text style={[styles.logoText, { color: C.primary }]}>
-            {initials}
-          </Text>
-        </View>
-
-        {/* Name + status */}
-        <View style={styles.nameBlock}>
-          <Text style={[styles.storeName, { color: C.text }]} numberOfLines={1}>
-            {store.name}
-          </Text>
-          <View style={styles.statusRow}>
-            <View
-              style={[
-                styles.statusDot,
-                {
-                  backgroundColor: store.isActive
-                    ? C.success
-                    : C.mutedForeground,
-                },
-              ]}
-            />
-            <Text style={[styles.statusText, { color: C.mutedForeground }]}>
-              {store.isActive ? "Active" : "Inactive"}
+          {/* Logo */}
+          <View
+            style={[
+              styles.logo,
+              {
+                backgroundColor: isDark
+                  ? C.backgroundElement
+                  : C.primaryForeground,
+              },
+            ]}
+          >
+            <Text style={[styles.logoText, { color: C.primary }]}>
+              {initials}
             </Text>
-            {allBranches.length > 0 && (
-              <>
-                <View
-                  style={[
-                    styles.dotSep,
-                    { backgroundColor: C.mutedForeground },
-                  ]}
-                />
-                <Text style={[styles.statusText, { color: C.mutedForeground }]}>
-                  {allBranches.length} branch
-                  {allBranches.length !== 1 ? "es" : ""}
-                </Text>
-              </>
-            )}
           </View>
-        </View>
+
+          {/* Name + status */}
+          <View style={styles.nameBlock}>
+            <Text
+              style={[styles.storeName, { color: C.text }]}
+              numberOfLines={1}
+            >
+              {store.name}
+            </Text>
+            <View style={styles.statusRow}>
+              <View
+                style={[
+                  styles.statusDot,
+                  {
+                    backgroundColor: store.isActive
+                      ? C.success
+                      : C.mutedForeground,
+                  },
+                ]}
+              />
+              <Text style={[styles.statusText, { color: C.mutedForeground }]}>
+                {store.isActive ? "Active" : "Inactive"}
+              </Text>
+              {allBranches.length > 0 && (
+                <>
+                  <View
+                    style={[
+                      styles.dotSep,
+                      { backgroundColor: C.mutedForeground },
+                    ]}
+                  />
+                  <Text
+                    style={[styles.statusText, { color: C.mutedForeground }]}
+                  >
+                    {allBranches.length} branch
+                    {allBranches.length !== 1 ? "es" : ""}
+                  </Text>
+                </>
+              )}
+            </View>
+          </View>
+        </TouchableOpacity>
 
         {/* Actions */}
         <View style={styles.actions}>
@@ -166,7 +175,7 @@ export const StoreCard: React.FC<StoreCardProps> = ({
             </TouchableOpacity>
           </Animated.View>
         </View>
-      </TouchableOpacity>
+      </View>
 
       {/* ── Expanded Details ─────────────────────────────────────────── */}
       {isExpanded && (
@@ -560,6 +569,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: Spacing.three,
     gap: Spacing.two,
+  },
+  headerMain: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.two,
+    minWidth: 0,
   },
   logo: {
     width: 44,

@@ -114,6 +114,7 @@ export default function StoreSetupScreen() {
 
     createStore(payload, {
       onSuccess: (res) => {
+        console.log(res?.message);
         if (res?.success) {
           router.replace("/(stores)");
         }

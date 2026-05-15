@@ -1,7 +1,6 @@
 import { pgTable, text, boolean, timestamp, index } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { user } from "../user/user.schema";
-import { stores } from "./stores.schema";
+import { stores } from "../stores/stores.schema";
 
 export const storeBranches = pgTable(
   "store_branches",

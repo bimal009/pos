@@ -1,8 +1,8 @@
 CREATE TYPE "public"."plan_tier" AS ENUM('starter', 'pro', 'business');--> statement-breakpoint
-CREATE TYPE "public"."plan_interval" AS ENUM('monthly', 'yearly');--> statement-breakpoint
-CREATE TYPE "public"."plan_status" AS ENUM('active', 'expired', 'cancelled', 'grace_period');--> statement-breakpoint
 CREATE TYPE "public"."shop_role" AS ENUM('owner', 'cofounder', 'manager', 'cashier');--> statement-breakpoint
 CREATE TYPE "public"."tax_type" AS ENUM('none', 'pan', 'vat');--> statement-breakpoint
+CREATE TYPE "public"."plan_interval" AS ENUM('monthly', 'yearly');--> statement-breakpoint
+CREATE TYPE "public"."plan_status" AS ENUM('active', 'expired', 'cancelled', 'grace_period');--> statement-breakpoint
 CREATE TYPE "public"."platform_role" AS ENUM('superadmin', 'user');--> statement-breakpoint
 CREATE TYPE "public"."user_type" AS ENUM('individual', 'company');--> statement-breakpoint
 CREATE TABLE "account" (
@@ -39,6 +39,19 @@ CREATE TABLE "verification" (
 	"updatedAt" timestamp
 );
 --> statement-breakpoint
+CREATE TABLE "store_branches" (
+	"id" text PRIMARY KEY NOT NULL,
+	"store_id" text NOT NULL,
+	"name" text NOT NULL,
+	"phone" text,
+	"address" text,
+	"is_main" boolean DEFAULT false NOT NULL,
+	"is_active" boolean DEFAULT true NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"deleted_at" timestamp
+);
+--> statement-breakpoint
 CREATE TABLE "categories" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
@@ -64,30 +77,57 @@ CREATE TABLE "plans" (
 	CONSTRAINT "plans_tier_unique" UNIQUE("tier")
 );
 --> statement-breakpoint
-CREATE TABLE "user_plans" (
-	"id" text PRIMARY KEY NOT NULL,
-	"user_id" text NOT NULL,
-	"plan_id" text NOT NULL,
-	"plan_interval" "plan_interval",
-	"status" "plan_status" DEFAULT 'active' NOT NULL,
-	"started_at" timestamp DEFAULT now() NOT NULL,
-	"expires_at" timestamp,
-	"cancelled_at" timestamp,
+CREATE TABLE "product_categories" (
+	"product_id" text NOT NULL,
+	"category_id" text NOT NULL,
+	"is_primary" boolean DEFAULT false NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL
+	CONSTRAINT "product_categories_product_id_category_id_pk" PRIMARY KEY("product_id","category_id")
 );
 --> statement-breakpoint
-CREATE TABLE "store_branches" (
+CREATE TABLE "product_variants" (
 	"id" text PRIMARY KEY NOT NULL,
-	"store_id" text NOT NULL,
-	"name" text NOT NULL,
-	"phone" text,
-	"address" text,
-	"is_main" boolean DEFAULT false NOT NULL,
+	"product_id" text NOT NULL,
+	"size" text,
+	"color" text,
+	"weight" text,
+	"flavor" text,
+	"volume" text,
+	"other" text,
+	"variant_label" text NOT NULL,
+	"barcode" text,
+	"image_url" text,
+	"stock" numeric(10, 3) DEFAULT '0' NOT NULL,
+	"low_stock_alert" boolean DEFAULT false NOT NULL,
+	"low_stock_threshold" numeric(10, 3),
 	"is_active" boolean DEFAULT true NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
-	"deleted_at" timestamp
+	"deleted_at" timestamp,
+	CONSTRAINT "product_variants_barcode_unique" UNIQUE("barcode")
+);
+--> statement-breakpoint
+CREATE TABLE "products" (
+	"id" text PRIMARY KEY NOT NULL,
+	"name" text NOT NULL,
+	"name_nepali" text,
+	"barcode" text,
+	"sku" text,
+	"description" text,
+	"manufacturer" text,
+	"brand" text,
+	"unit_id" text NOT NULL,
+	"image_url" text,
+	"stock" numeric(10, 3) DEFAULT '0' NOT NULL,
+	"low_stock_alert" boolean DEFAULT false NOT NULL,
+	"low_stock_threshold" numeric(10, 3),
+	"has_variants" boolean DEFAULT false NOT NULL,
+	"is_unbranded" boolean DEFAULT false NOT NULL,
+	"is_active" boolean DEFAULT true NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"deleted_at" timestamp,
+	CONSTRAINT "products_barcode_unique" UNIQUE("barcode")
 );
 --> statement-breakpoint
 CREATE TABLE "store_categories" (
@@ -120,6 +160,30 @@ CREATE TABLE "stores" (
 	"deleted_at" timestamp
 );
 --> statement-breakpoint
+CREATE TABLE "units" (
+	"id" text PRIMARY KEY NOT NULL,
+	"name" text NOT NULL,
+	"name_nepali" text,
+	"abbreviation" text NOT NULL,
+	"is_active" boolean DEFAULT true NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"deleted_at" timestamp
+);
+--> statement-breakpoint
+CREATE TABLE "user_plans" (
+	"id" text PRIMARY KEY NOT NULL,
+	"user_id" text NOT NULL,
+	"plan_id" text NOT NULL,
+	"plan_interval" "plan_interval",
+	"status" "plan_status" DEFAULT 'active' NOT NULL,
+	"started_at" timestamp DEFAULT now() NOT NULL,
+	"expires_at" timestamp,
+	"cancelled_at" timestamp,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE "user" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
@@ -131,7 +195,6 @@ CREATE TABLE "user" (
 	"user_type" "user_type" DEFAULT 'individual' NOT NULL,
 	"platform_role" "platform_role",
 	"is_onboarded" boolean DEFAULT false NOT NULL,
-	"plan_id" text NOT NULL,
 	"createdAt" timestamp NOT NULL,
 	"updatedAt" timestamp NOT NULL,
 	CONSTRAINT "user_email_unique" UNIQUE("email"),
@@ -140,19 +203,24 @@ CREATE TABLE "user" (
 --> statement-breakpoint
 ALTER TABLE "account" ADD CONSTRAINT "account_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "session" ADD CONSTRAINT "session_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "user_plans" ADD CONSTRAINT "user_plans_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "user_plans" ADD CONSTRAINT "user_plans_plan_id_plans_id_fk" FOREIGN KEY ("plan_id") REFERENCES "public"."plans"("id") ON DELETE restrict ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "store_branches" ADD CONSTRAINT "store_branches_store_id_stores_id_fk" FOREIGN KEY ("store_id") REFERENCES "public"."stores"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "product_categories" ADD CONSTRAINT "product_categories_product_id_products_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."products"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "product_categories" ADD CONSTRAINT "product_categories_category_id_categories_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."categories"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "product_variants" ADD CONSTRAINT "product_variants_product_id_products_id_fk" FOREIGN KEY ("product_id") REFERENCES "public"."products"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "products" ADD CONSTRAINT "products_unit_id_units_id_fk" FOREIGN KEY ("unit_id") REFERENCES "public"."units"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "store_categories" ADD CONSTRAINT "store_categories_store_id_stores_id_fk" FOREIGN KEY ("store_id") REFERENCES "public"."stores"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "store_categories" ADD CONSTRAINT "store_categories_category_id_categories_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."categories"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "store_members" ADD CONSTRAINT "store_members_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "store_members" ADD CONSTRAINT "store_members_store_id_stores_id_fk" FOREIGN KEY ("store_id") REFERENCES "public"."stores"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "stores" ADD CONSTRAINT "stores_owner_id_user_id_fk" FOREIGN KEY ("owner_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "user" ADD CONSTRAINT "user_plan_id_plans_id_fk" FOREIGN KEY ("plan_id") REFERENCES "public"."plans"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "user_plans" ADD CONSTRAINT "user_plans_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "user_plans" ADD CONSTRAINT "user_plans_plan_id_plans_id_fk" FOREIGN KEY ("plan_id") REFERENCES "public"."plans"("id") ON DELETE restrict ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX "idx_store_branches_store_id" ON "store_branches" USING btree ("store_id");--> statement-breakpoint
 CREATE INDEX "idx_store_branches_is_active" ON "store_branches" USING btree ("is_active");--> statement-breakpoint
 CREATE INDEX "idx_store_branches_deleted_at" ON "store_branches" USING btree ("deleted_at");--> statement-breakpoint
 CREATE INDEX "idx_store_branches_unique_name" ON "store_branches" USING btree ("store_id","name");--> statement-breakpoint
+CREATE INDEX "product_categories_product_idx" ON "product_categories" USING btree ("product_id");--> statement-breakpoint
+CREATE INDEX "product_categories_category_idx" ON "product_categories" USING btree ("category_id");--> statement-breakpoint
 CREATE INDEX "idx_store_categories_store_id" ON "store_categories" USING btree ("store_id");--> statement-breakpoint
 CREATE INDEX "idx_store_categories_category_id" ON "store_categories" USING btree ("category_id");--> statement-breakpoint
 CREATE INDEX "idx_stores_owner_id" ON "stores" USING btree ("owner_id");--> statement-breakpoint

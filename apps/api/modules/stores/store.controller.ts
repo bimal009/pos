@@ -29,7 +29,7 @@ export async function createStore(
       return sendBadRequest(reply, "One or more category IDs are invalid");
     }
 
-    const store = await insertStore({
+    const store = await insertStore(request.server, {
       ...request.body,
       ownerId: session.user.id,
     });

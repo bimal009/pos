@@ -6,6 +6,7 @@ import authRoutes from "./modules/auth/auth.routes";
 import "./types/index";
 import categoriesRoutes from "./modules/categories/categories.routes";
 import storeRoutes from "./modules/stores/store.routes";
+import branchRoutes from "./modules/branches/branches.routes";
 import imagesRoutes from "./modules/images/images.routes";
 import plansRoutes from "./modules/plans/plans.routes";
 import userRoutes from "./modules/user/user.routes";
@@ -37,6 +38,7 @@ app.register(authRoutes, { prefix: "/api/v1/auth" });
 app.register(userRoutes, { prefix: "/api/v1/users" });
 app.register(categoriesRoutes, { prefix: "/api/v1/categories" });
 app.register(storeRoutes, { prefix: "/api/v1/stores" });
+app.register(branchRoutes, { prefix: "/api/v1/branches" });
 app.register(imagesRoutes, { prefix: "/api/v1/images" });
 app.register(plansRoutes, { prefix: "/api/v1/plans" });
 

@@ -2,7 +2,7 @@ import { FastifyInstance } from "fastify";
 import { OnboardUserDto } from "./interfaces";
 import { user } from "./user.schema";
 import { eq } from "drizzle-orm";
-import { userPlans } from "../plans/user-plans.schema";
+import { userPlans } from "../user-plans/user-plans.schema";
 import { env } from "../../config/env";
 
 export const onboardUserService = async (

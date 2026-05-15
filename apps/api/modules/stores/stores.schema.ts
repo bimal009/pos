@@ -10,7 +10,7 @@ import {
 import { relations } from "drizzle-orm";
 import { categories } from "../categories/categories.schema";
 import { user } from "../user/user.schema";
-import { storeBranches } from "./branches.schema";
+import { storeBranches } from "../branches/branches.schema";
 export const shopRoleEnum = pgEnum("shop_role", [
   "owner",
   "cofounder",
