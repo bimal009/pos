@@ -10,13 +10,15 @@ import branchRoutes from "./modules/branches/branches.routes";
 import imagesRoutes from "./modules/images/images.routes";
 import plansRoutes from "./modules/plans/plans.routes";
 import userRoutes from "./modules/user/user.routes";
+import { unitsRoutes } from "./modules/units/units.routes";
+import userPlansRoutes from "./modules/user-plans/user-plans.routes";
 
 const app = Fastify({
   logger: true,
   ajv: {
     customOptions: {
       strict: true,
-      coerceTypes: false,
+      coerceTypes: true,
       useDefaults: true,
       removeAdditional: false,
       allErrors: true,
@@ -41,5 +43,7 @@ app.register(storeRoutes, { prefix: "/api/v1/stores" });
 app.register(branchRoutes, { prefix: "/api/v1/branches" });
 app.register(imagesRoutes, { prefix: "/api/v1/images" });
 app.register(plansRoutes, { prefix: "/api/v1/plans" });
+app.register(unitsRoutes, { prefix: "/api/v1/units" });
+app.register(userPlansRoutes, { prefix: "/api/v1/user-plans" });
 
 export default app;

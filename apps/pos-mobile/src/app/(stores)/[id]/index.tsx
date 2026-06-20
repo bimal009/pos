@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Colors, Fonts, Radius, Spacing, Ui } from "@/constants/theme";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const theme = Colors.light;
@@ -25,7 +25,8 @@ type NavItem = { label: string; icon: string; activeIcon: string };
 type QuickAction = {
   label: string;
   icon: string;
-  route?: string;
+  /** Relative path under the current store, e.g. "products/create" */
+  href?: string;
 };
 type StatCard = {
   label: string;
@@ -60,11 +61,15 @@ const shortcuts: QuickAction[] = [
   { label: "Sales Invoice", icon: "pricetag-outline" },
   { label: "Payment In", icon: "arrow-down-circle-outline" },
   { label: "Payment Out", icon: "arrow-up-circle-outline" },
-  { label: "Purchase", icon: "cart-outline", route: "/(products)/create/new" },
+  {
+    label: "Purchase",
+    icon: "cart-outline",
+    href: "products/create",
+  },
   {
     label: "Add Item",
     icon: "add-circle-outline",
-    route: "/(products)/create",
+    href: "products/create",
   },
   { label: "Expense", icon: "wallet-outline" },
 ];
@@ -246,8 +251,14 @@ function CashflowChart() {
 
 // ─── Main Screen ─────────────────────────────────────────────────────────────
 export default function HomeScreen() {
+  const { id: storeId } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
   const [activeNav, setActiveNav] = useState(0);
+
+  const openStoreRoute = (href: string) => {
+    if (!storeId || storeId === "[id]") return;
+    router.push(`/(stores)/${storeId}/${href}`);
+  };
   const [showBanner, setShowBanner] = useState(true);
   const [cashflowFilter, setCashflowFilter] = useState<"Daily" | "Weekly">(
     "Daily",
@@ -265,7 +276,11 @@ export default function HomeScreen() {
 
       {/* ── Top Bar ── */}
       <Animated.View style={[styles.topBar, headerStyle]}>
-        <TouchableOpacity activeOpacity={0.75} style={styles.shopSelector}>
+        <TouchableOpacity
+          onPress={() => router.push("/(stores)")}
+          activeOpacity={0.75}
+          style={styles.shopSelector}
+        >
           <View style={styles.avatarBox}>
             <Text style={styles.avatarText}>SN</Text>
           </View>
@@ -421,7 +436,7 @@ export default function HomeScreen() {
                 key={item.label}
                 activeOpacity={0.75}
                 style={styles.shortcutItem}
-                onPress={() => item.route && router.push(item.route as any)}
+                onPress={() => item.href && openStoreRoute(item.href)}
               >
                 <View style={styles.shortcutIconCircle}>
                   <Ionicons

@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev --filter=./apps/pos --filter=./apps/pos-mobile",
+    "dev": "turbo run dev --filter=./apps/api --filter=./apps/pos-mobile",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types"
   },

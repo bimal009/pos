@@ -14,3 +14,14 @@ export const getPlans = async (): Promise<Plan[] | null> => {
     return null;
   }
 };
+
+export const getUserPlans = async (): Promise<Plan | null> => {
+  try {
+    const response = await api.get<ApiResponse<Plan>>("/api/v1/plans/me");
+
+    return response.data.data;
+  } catch (error) {
+    console.error("Failed to fetch user plan:", error);
+    return null;
+  }
+};

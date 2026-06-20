@@ -4,3 +4,7 @@ export * from "../modules/plans/plans.schema";
 export * from "../modules/user-plans/user-plans.schema";
 export * from "../modules/stores/stores.schema";
 export * from "../modules/branches/branches.schema";
+export * from "../modules/units/units.schema";
+export * from "../modules/products/products.schema";
+export * from "../modules/store-products/store-products.schema";
+export * from "../modules/store-product-variants/store-product-variants.schema";

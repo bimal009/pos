@@ -154,12 +154,8 @@ export default function StoresScreen() {
   });
 
   const handleOpenStore = useCallback((store: Store) => {
-    router.push({
-      pathname: "/(stores)/[id]",
-      params: { id: store.id },
-    });
+    router.push(`/(stores)/${store.id}`);
   }, []);
-
   const handleEditStore = useCallback((store: Store) => {
     router.push({ pathname: "/(stores)/edit/[id]", params: { id: store.id } });
   }, []);

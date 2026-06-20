@@ -133,7 +133,6 @@ export default function StoreSetupScreen() {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
-          {/* Header */}
           <View style={s.header}>
             <Text style={s.title}>Store Setup</Text>
             <Text style={s.subtitle}>
@@ -141,7 +140,6 @@ export default function StoreSetupScreen() {
             </Text>
           </View>
 
-          {/* Logo */}
           <View style={s.logoRow}>
             <Controller
               control={control}
@@ -432,6 +430,25 @@ export default function StoreSetupScreen() {
 
         {/* Footer */}
         <View style={s.footer}>
+          <TouchableOpacity
+            style={[s.button, creating && s.buttonDisabled]}
+            disabled={creating}
+            activeOpacity={0.85}
+            onPress={() => router.replace("/(stores)")}
+          >
+            {creating ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <>
+                <Text style={s.buttonText}>Skip</Text>
+                <MaterialCommunityIcons
+                  name="skip-next"
+                  size={20}
+                  color="#fff"
+                />
+              </>
+            )}
+          </TouchableOpacity>
           <TouchableOpacity
             style={[s.button, creating && s.buttonDisabled]}
             disabled={creating}
