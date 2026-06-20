@@ -1,11 +1,13 @@
 import { FastifyInstance } from "fastify";
 import { fromNodeHeaders } from "better-auth/node";
 import { auth } from "../../plugins/auth";
+import type {} from "@fastify/swagger";
 
 export default async function (fastify: FastifyInstance) {
   fastify.route({
     method: ["GET", "POST"],
     url: "/*",
+    schema: { hide: true },
     async handler(request, reply) {
       try {
         const url = new URL(request.url, `http://${request.headers.host}`);
