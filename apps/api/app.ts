@@ -2,6 +2,7 @@ import "dotenv/config";
 import Fastify from "fastify";
 import fastifyCors from "@fastify/cors";
 import dbPlugin from "./plugins/db";
+import swaggerPlugin from "./plugins/swagger";
 import authRoutes from "./modules/auth/auth.routes";
 import "./types/index";
 import categoriesRoutes from "./modules/categories/categories.routes";
@@ -34,6 +35,7 @@ app.register(fastifyCors, {
   maxAge: 86400,
 });
 
+app.register(swaggerPlugin);
 app.register(dbPlugin);
 
 app.register(authRoutes, { prefix: "/api/v1/auth" });
