@@ -1,6 +1,6 @@
 /**
  * App theme configuration
- * OKLCH converted to HEX values
+ * Palette matched to the "Task Management & To-Do List" UI kit (violet accent)
  */
 
 import "@/global.css";
@@ -17,7 +17,7 @@ export const Colors = {
     text: "#171717",
     textSecondary: "#737373",
     backgroundElement: "#f5f5f5",
-    backgroundSelected: "#f4f4f5",
+    backgroundSelected: "#ede9fe",
 
     // Semantic tokens
     card: "#ffffff",
@@ -26,20 +26,20 @@ export const Colors = {
     popover: "#ffffff",
     popoverForeground: "#171717",
 
-    primary: "#dc2626",
-    primaryForeground: "#fef2f2",
+    primary: "#6f48e4",
+    primaryForeground: "#ffffff",
 
-    secondary: "#f4f4f5",
-    secondaryForeground: "#3f3f46",
+    secondary: "#ede9fe",
+    secondaryForeground: "#4c1d95",
 
     muted: "#f5f5f5",
     mutedForeground: "#737373",
 
-    accent: "#f5f5f5",
-    accentForeground: "#262626",
+    accent: "#ede9fe",
+    accentForeground: "#4c1d95",
 
     destructive: "#e11d48",
-    destructiveSubtle: "rgba(220, 38, 38, 0.06)",
+    destructiveSubtle: "rgba(225, 29, 72, 0.06)",
 
     success: "#10b981",
 
@@ -47,24 +47,24 @@ export const Colors = {
     input: "#e5e5e5",
     ring: "#a3a3a3",
 
-    selectedCardBackground: "#f0f5ff",
+    selectedCardBackground: "#f3f0ff",
 
     // Charts
-    chart1: "#fca5a5",
-    chart2: "#ef4444",
-    chart3: "#dc2626",
-    chart4: "#b91c1c",
-    chart5: "#991b1b",
+    chart1: "#c4b5fd",
+    chart2: "#a78bfa",
+    chart3: "#8b5cf6",
+    chart4: "#7c3aed",
+    chart5: "#6d28d9",
 
     // Sidebar
     sidebar: "#fafafa",
     sidebarForeground: "#171717",
 
-    sidebarPrimary: "#dc2626",
-    sidebarPrimaryForeground: "#fef2f2",
+    sidebarPrimary: "#6f48e4",
+    sidebarPrimaryForeground: "#ffffff",
 
-    sidebarAccent: "#f5f5f5",
-    sidebarAccentForeground: "#262626",
+    sidebarAccent: "#ede9fe",
+    sidebarAccentForeground: "#4c1d95",
 
     sidebarBorder: "#e5e5e5",
     sidebarRing: "#a3a3a3",
@@ -82,7 +82,7 @@ export const Colors = {
     text: "#fafafa",
     textSecondary: "#a3a3a3",
     backgroundElement: "#404040",
-    backgroundSelected: "#3f3f46",
+    backgroundSelected: "#2e2a44",
 
     // Semantic tokens
     card: "#262626",
@@ -91,20 +91,20 @@ export const Colors = {
     popover: "#262626",
     popoverForeground: "#fafafa",
 
-    primary: "#991b1b",
-    primaryForeground: "#fef2f2",
+    primary: "#7c5cf0",
+    primaryForeground: "#ffffff",
 
-    secondary: "#3f3f46",
-    secondaryForeground: "#fafafa",
+    secondary: "#2e2a44",
+    secondaryForeground: "#ede9fe",
 
     muted: "#404040",
     mutedForeground: "#a3a3a3",
 
-    accent: "#404040",
-    accentForeground: "#fafafa",
+    accent: "#2e2a44",
+    accentForeground: "#ede9fe",
 
     destructive: "#fb7185",
-    destructiveSubtle: "rgba(239, 68, 68, 0.12)",
+    destructiveSubtle: "rgba(251, 113, 133, 0.12)",
 
     success: "#34d399",
 
@@ -112,24 +112,24 @@ export const Colors = {
     input: "rgba(255,255,255,0.15)",
     ring: "#737373",
 
-    selectedCardBackground: "#2a181a",
+    selectedCardBackground: "#241d3a",
 
     // Charts
-    chart1: "#fca5a5",
-    chart2: "#ef4444",
-    chart3: "#dc2626",
-    chart4: "#b91c1c",
-    chart5: "#991b1b",
+    chart1: "#c4b5fd",
+    chart2: "#a78bfa",
+    chart3: "#8b5cf6",
+    chart4: "#7c3aed",
+    chart5: "#6d28d9",
 
     // Sidebar
     sidebar: "#3f3f46",
     sidebarForeground: "#fafafa",
 
-    sidebarPrimary: "#ef4444",
-    sidebarPrimaryForeground: "#fef2f2",
+    sidebarPrimary: "#8b5cf6",
+    sidebarPrimaryForeground: "#ffffff",
 
-    sidebarAccent: "#404040",
-    sidebarAccentForeground: "#fafafa",
+    sidebarAccent: "#2e2a44",
+    sidebarAccentForeground: "#ede9fe",
 
     sidebarBorder: "rgba(255,255,255,0.1)",
     sidebarRing: "#737373",
