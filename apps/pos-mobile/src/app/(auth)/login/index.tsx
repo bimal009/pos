@@ -12,6 +12,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { authClient } from "../../../../auth-client";
 import { Colors } from "@/constants/theme";
+import { translations } from "./translations/login";
 
 interface PhoneScreenProps {
   onNext?: (phone: string) => void;
@@ -26,6 +27,9 @@ export default function PhoneScreen({ onNext, onBack }: PhoneScreenProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const lang = "english";
+  const translation = translations[lang];
+
   const isValidPhone = phone.length === 10;
 
   const handleSendOTP = async () => {
@@ -37,7 +41,7 @@ export default function PhoneScreen({ onNext, onBack }: PhoneScreenProps) {
     });
     setLoading(false);
     if (error) {
-      setError(error.message ?? "Failed to send OTP. Please try again.");
+      setError(error.message ?? translation.otpFailed);
     } else {
       onNext?.(`+977${phone}`);
     }
@@ -57,9 +61,9 @@ export default function PhoneScreen({ onNext, onBack }: PhoneScreenProps) {
           <Ionicons name="arrow-back" size={22} color={C.text} />
         </TouchableOpacity>
 
-        <Text style={styles.title}>Welcome</Text>
+        <Text style={styles.title}>{translation.welcome}</Text>
         <Text style={styles.subtitle}>
-          Enter your phone number to get started
+          {translation.subtitle}
         </Text>
 
         <View style={styles.inputWrapper}>
@@ -70,7 +74,7 @@ export default function PhoneScreen({ onNext, onBack }: PhoneScreenProps) {
           <View style={styles.divider} />
           <TextInput
             style={styles.input}
-            placeholder="Phone number"
+            placeholder={translation.phoneNumber}
             placeholderTextColor={C.textSecondary}
             keyboardType="phone-pad"
             value={phone}
@@ -85,8 +89,7 @@ export default function PhoneScreen({ onNext, onBack }: PhoneScreenProps) {
         {error ? <Text style={styles.error}>{error}</Text> : null}
 
         <Text style={styles.hint}>
-          We will send you a secure one-time password (OTP) to verify your
-          account.
+          {translation.otpHint}
         </Text>
       </View>
 
@@ -103,7 +106,7 @@ export default function PhoneScreen({ onNext, onBack }: PhoneScreenProps) {
           {loading ? (
             <ActivityIndicator color={C.primaryForeground} />
           ) : (
-            <Text style={styles.sendBtnText}>Send OTP</Text>
+            <Text style={styles.sendBtnText}>{translation.sendOtp}</Text>
           )}
         </TouchableOpacity>
       </View>
