@@ -27,7 +27,7 @@ export default function PhoneScreen({ onNext, onBack }: PhoneScreenProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const lang = "english";
+  const [lang, setLang] = useState<"english" | "nepali">("english");
   const translation = translations[lang];
 
   const isValidPhone = phone.length === 10;
@@ -57,11 +57,50 @@ export default function PhoneScreen({ onNext, onBack }: PhoneScreenProps) {
       />
 
       <View style={styles.container}>
-        <TouchableOpacity style={styles.backBtn} onPress={onBack}>
-          <Ionicons name="arrow-back" size={22} color={C.text} />
-        </TouchableOpacity>
+        <View style={styles.headerRow}>
+          <TouchableOpacity style={styles.backBtn} onPress={onBack}>
+            <Ionicons name="arrow-back" size={22} color={C.text} />
+          </TouchableOpacity>
+
+          <View style={styles.languageSwitcher}>
+            <TouchableOpacity
+              style={[
+                styles.languageButton,
+                lang === "english" && styles.languageButtonActive,
+              ]}
+              onPress={() => setLang("english")}
+            >
+              <Text
+                style={[
+                  styles.languageText,
+                  lang === "english" && styles.languageTextActive,
+                ]}
+              >
+                EN
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.languageButton,
+                lang === "nepali" && styles.languageButtonActive,
+              ]}
+              onPress={() => setLang("nepali")}
+            >
+              <Text
+                style={[
+                  styles.languageText,
+                  lang === "nepali" && styles.languageTextActive,
+                ]}
+              >
+                ने
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
 
         <Text style={styles.title}>{translation.welcome}</Text>
+
         <Text style={styles.subtitle}>
           {translation.subtitle}
         </Text>
@@ -210,5 +249,40 @@ const makeStyles = (C: (typeof Colors)[keyof typeof Colors]) =>
       fontSize: 16,
       fontWeight: "700",
       letterSpacing: 0.3,
+    },
+    headerRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 28,
+    },
+
+    languageSwitcher: {
+      flexDirection: "row",
+      backgroundColor: C.card,
+      borderRadius: 10,
+      padding: 2,
+      borderWidth: 1,
+      borderColor: C.border,
+    },
+
+    languageButton: {
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 8,
+    },
+
+    languageButtonActive: {
+      backgroundColor: C.primary,
+    },
+
+    languageText: {
+      color: C.textSecondary,
+      fontSize: 13,
+      fontWeight: "600",
+    },
+
+    languageTextActive: {
+      color: C.primaryForeground,
     },
   });
