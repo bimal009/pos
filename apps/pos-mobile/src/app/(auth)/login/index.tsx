@@ -12,6 +12,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { authClient } from "../../../../auth-client";
 import { Colors } from "@/constants/theme";
+import { translations } from "./translations/login";
 
 interface PhoneScreenProps {
   onNext?: (phone: string) => void;
@@ -26,6 +27,9 @@ export default function PhoneScreen({ onNext, onBack }: PhoneScreenProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const [lang, setLang] = useState<"english" | "nepali">("english");
+  const translation = translations[lang];
+
   const isValidPhone = phone.length === 10;
 
   const handleSendOTP = async () => {
@@ -37,7 +41,7 @@ export default function PhoneScreen({ onNext, onBack }: PhoneScreenProps) {
     });
     setLoading(false);
     if (error) {
-      setError(error.message ?? "Failed to send OTP. Please try again.");
+      setError(error.message ?? translation.otpFailed);
     } else {
       onNext?.(`+977${phone}`);
     }
@@ -53,13 +57,52 @@ export default function PhoneScreen({ onNext, onBack }: PhoneScreenProps) {
       />
 
       <View style={styles.container}>
-        <TouchableOpacity style={styles.backBtn} onPress={onBack}>
-          <Ionicons name="arrow-back" size={22} color={C.text} />
-        </TouchableOpacity>
+        <View style={styles.headerRow}>
+          <TouchableOpacity style={styles.backBtn} onPress={onBack}>
+            <Ionicons name="arrow-back" size={22} color={C.text} />
+          </TouchableOpacity>
 
-        <Text style={styles.title}>Welcome</Text>
+          <View style={styles.languageSwitcher}>
+            <TouchableOpacity
+              style={[
+                styles.languageButton,
+                lang === "english" && styles.languageButtonActive,
+              ]}
+              onPress={() => setLang("english")}
+            >
+              <Text
+                style={[
+                  styles.languageText,
+                  lang === "english" && styles.languageTextActive,
+                ]}
+              >
+                EN
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.languageButton,
+                lang === "nepali" && styles.languageButtonActive,
+              ]}
+              onPress={() => setLang("nepali")}
+            >
+              <Text
+                style={[
+                  styles.languageText,
+                  lang === "nepali" && styles.languageTextActive,
+                ]}
+              >
+                ने
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <Text style={styles.title}>{translation.welcome}</Text>
+
         <Text style={styles.subtitle}>
-          Enter your phone number to get started
+          {translation.subtitle}
         </Text>
 
         <View style={styles.inputWrapper}>
@@ -70,7 +113,7 @@ export default function PhoneScreen({ onNext, onBack }: PhoneScreenProps) {
           <View style={styles.divider} />
           <TextInput
             style={styles.input}
-            placeholder="Phone number"
+            placeholder={translation.phoneNumber}
             placeholderTextColor={C.textSecondary}
             keyboardType="phone-pad"
             value={phone}
@@ -85,8 +128,7 @@ export default function PhoneScreen({ onNext, onBack }: PhoneScreenProps) {
         {error ? <Text style={styles.error}>{error}</Text> : null}
 
         <Text style={styles.hint}>
-          We will send you a secure one-time password (OTP) to verify your
-          account.
+          {translation.otpHint}
         </Text>
       </View>
 
@@ -103,7 +145,7 @@ export default function PhoneScreen({ onNext, onBack }: PhoneScreenProps) {
           {loading ? (
             <ActivityIndicator color={C.primaryForeground} />
           ) : (
-            <Text style={styles.sendBtnText}>Send OTP</Text>
+            <Text style={styles.sendBtnText}>{translation.sendOtp}</Text>
           )}
         </TouchableOpacity>
       </View>
@@ -207,5 +249,40 @@ const makeStyles = (C: (typeof Colors)[keyof typeof Colors]) =>
       fontSize: 16,
       fontWeight: "700",
       letterSpacing: 0.3,
+    },
+    headerRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginBottom: 28,
+    },
+
+    languageSwitcher: {
+      flexDirection: "row",
+      backgroundColor: C.card,
+      borderRadius: 10,
+      padding: 2,
+      borderWidth: 1,
+      borderColor: C.border,
+    },
+
+    languageButton: {
+      paddingHorizontal: 12,
+      paddingVertical: 6,
+      borderRadius: 8,
+    },
+
+    languageButtonActive: {
+      backgroundColor: C.primary,
+    },
+
+    languageText: {
+      color: C.textSecondary,
+      fontSize: 13,
+      fontWeight: "600",
+    },
+
+    languageTextActive: {
+      color: C.primaryForeground,
     },
   });
