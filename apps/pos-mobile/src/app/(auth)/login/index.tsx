@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   View,
   Text,
@@ -13,6 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { authClient } from "../../../../auth-client";
 import { Colors } from "@/constants/theme";
 import { translations } from "./translations/login";
+import { useLanguage } from "@/lib/hooks/useLanguage";
 
 interface PhoneScreenProps {
   onNext?: (phone: string) => void;
@@ -27,10 +28,11 @@ export default function PhoneScreen({ onNext, onBack }: PhoneScreenProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const [lang, setLang] = useState<"english" | "nepali">("english");
-  const translation = translations[lang];
+  const { lang, changeLanguage, loaded } = useLanguage();
+  const translation = useMemo(() => translations[lang], [lang]);
 
-  const isValidPhone = phone.length === 10;
+  // const isValidPhone = phone.length === 10;
+  const isValidPhone = /^[0-9]{10}$/.test(phone);
 
   const handleSendOTP = async () => {
     if (!isValidPhone) return;
@@ -48,6 +50,14 @@ export default function PhoneScreen({ onNext, onBack }: PhoneScreenProps) {
   };
 
   const styles = useMemo(() => makeStyles(C), [scheme]);
+
+  if (!loaded) {
+    return (
+      <View style={[styles.safe, { justifyContent: "center" }]}>
+        <ActivityIndicator />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.safe}>
@@ -68,7 +78,7 @@ export default function PhoneScreen({ onNext, onBack }: PhoneScreenProps) {
                 styles.languageButton,
                 lang === "english" && styles.languageButtonActive,
               ]}
-              onPress={() => setLang("english")}
+              onPress={() => changeLanguage("english")}
             >
               <Text
                 style={[
@@ -85,7 +95,7 @@ export default function PhoneScreen({ onNext, onBack }: PhoneScreenProps) {
                 styles.languageButton,
                 lang === "nepali" && styles.languageButtonActive,
               ]}
-              onPress={() => setLang("nepali")}
+              onPress={() => changeLanguage("nepali")}
             >
               <Text
                 style={[
