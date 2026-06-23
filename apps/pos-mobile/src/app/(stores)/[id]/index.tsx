@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useMemo } from "react";
 import {
   View,
   Text,
@@ -14,6 +14,8 @@ import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Colors, Fonts, Radius, Spacing, Ui } from "@/constants/theme";
 import { router, useLocalSearchParams } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useLanguage } from "@/lib/hooks/useLanguage";
+import { translations } from "./translation";
 
 const theme = Colors.light;
 const { width } = Dimensions.get("window");
@@ -22,6 +24,7 @@ const HALF_CARD = (width - Spacing.three * 2 - CARD_GAP) / 2;
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 type NavItem = { label: string; icon: string; activeIcon: string };
+type TranslationKey = keyof typeof translations.english;
 type QuickAction = {
   label: string;
   icon: string;
@@ -36,70 +39,8 @@ type StatCard = {
   arrow?: "down" | "up";
 };
 
+
 // ─── Data ────────────────────────────────────────────────────────────────────
-const navItems: NavItem[] = [
-  { label: "Home", icon: "home-outline", activeIcon: "home" },
-  {
-    label: "Transactions",
-    icon: "swap-horizontal-outline",
-    activeIcon: "swap-horizontal",
-  },
-  { label: "Parties", icon: "people-outline", activeIcon: "people" },
-  { label: "Inventory", icon: "cube-outline", activeIcon: "cube" },
-  { label: "More", icon: "grid-outline", activeIcon: "grid" },
-];
-
-const topShortcuts: QuickAction[] = [
-  { label: "Quick Entry", icon: "flash-outline" },
-  { label: "Quick POS", icon: "storefront-outline" },
-  { label: "View Reports", icon: "bar-chart-outline" },
-  { label: "Credit Reminder", icon: "notifications-outline" },
-];
-
-const shortcuts: QuickAction[] = [
-  { label: "Add Party", icon: "person-add-outline" },
-  { label: "Sales Invoice", icon: "pricetag-outline" },
-  { label: "Payment In", icon: "arrow-down-circle-outline" },
-  { label: "Payment Out", icon: "arrow-up-circle-outline" },
-  {
-    label: "Purchase",
-    icon: "cart-outline",
-    href: "products/create",
-  },
-  {
-    label: "Add Item",
-    icon: "add-circle-outline",
-    href: "products/create",
-  },
-  { label: "Expense", icon: "wallet-outline" },
-];
-
-const statCards: StatCard[] = [
-  {
-    label: "To Receive",
-    value: "Rs. 12,500",
-    sub: "3 parties",
-    tint: "green",
-    arrow: "down",
-  },
-  {
-    label: "To Give",
-    value: "Rs. 4,200",
-    sub: "2 parties",
-    tint: "red",
-    arrow: "up",
-  },
-  { label: "Sales (Jestha)", value: "Rs. 45,000", tint: "neutral" },
-  { label: "Purchase (Jestha)", value: "Rs. 18,300", tint: "neutral" },
-  { label: "Expense (Jestha)", value: "Rs. 6,800", tint: "neutral" },
-  {
-    label: "Total Balance",
-    value: "Cash & Bank",
-    sub: "Rs. 32,500",
-    tint: "neutral",
-  },
-];
-
 const cashflowData = [
   { day: "Bai 27", in: 12000, out: 8000 },
   { day: "Bai 28", in: 18000, out: 5000 },
@@ -134,7 +75,7 @@ function useFadeSlide(delay = 0) {
 }
 
 // ─── Mini Cashflow Chart ──────────────────────────────────────────────────────
-function CashflowChart() {
+function CashflowChart({ t }: { t: any }) {
   const maxVal = 20000;
   const chartW = width - Spacing.three * 2 - 40;
   const chartH = 110;
@@ -227,7 +168,7 @@ function CashflowChart() {
             style={[styles.legendDot, { backgroundColor: theme.success }]}
           />
           <View>
-            <Text style={styles.legendLabel}>Total Money In</Text>
+            <Text style={styles.legendLabel}>{t.cashflowIn}</Text>
             <Text style={[styles.legendValue, { color: theme.success }]}>
               Rs. 1,00,000
             </Text>
@@ -238,7 +179,7 @@ function CashflowChart() {
             style={[styles.legendDot, { backgroundColor: theme.primary }]}
           />
           <View>
-            <Text style={styles.legendLabel}>Total Money Out</Text>
+            <Text style={styles.legendLabel}>{t.cashflowOut}</Text>
             <Text style={[styles.legendValue, { color: theme.primary }]}>
               Rs. 61,000
             </Text>
@@ -262,6 +203,137 @@ export default function HomeScreen() {
   const [showBanner, setShowBanner] = useState(true);
   const [cashflowFilter, setCashflowFilter] = useState<"Daily" | "Weekly">(
     "Daily",
+  );
+
+  // Translations
+  const { lang, changeLanguage } = useLanguage();
+  const t = useMemo(() => {
+    return translations[lang] as typeof translations.english;
+  }, [lang]);
+
+  const navItems = [
+    { label: t.home, icon: "home-outline", activeIcon: "home" },
+    {
+      label: t.transactions,
+      icon: "swap-horizontal-outline",
+      activeIcon: "swap-horizontal",
+    },
+    {
+      label: t.parties,
+      icon: "people-outline",
+      activeIcon: "people",
+    },
+    {
+      label: t.inventory,
+      icon: "cube-outline",
+      activeIcon: "cube",
+    },
+    {
+      label: t.more,
+      icon: "grid-outline",
+      activeIcon: "grid",
+    },
+  ];
+
+  const topShortcuts = [
+    { label: t.quickEntry, icon: "flash-outline" },
+    { label: t.quickPos, icon: "storefront-outline" },
+    { label: t.viewReports, icon: "bar-chart-outline" },
+    { label: t.creditReminder, icon: "notifications-outline" },
+  ];
+
+  const shortcuts: (QuickAction & { href?: string })[] = [
+    { label: t.addParty, icon: "person-add-outline" },
+    { label: t.salesInvoice, icon: "pricetag-outline" },
+    { label: t.paymentIn, icon: "arrow-down-circle-outline" },
+    { label: t.paymentOut, icon: "arrow-up-circle-outline" },
+    { label: t.purchase, icon: "cart-outline" },
+    { label: t.addItem, icon: "add-circle-outline" },
+    { label: t.expense, icon: "wallet-outline" },
+  ];
+
+  const statCards = [
+    {
+      labelKey: "toReceive" as TranslationKey,
+      subKey: "threeParties" as TranslationKey,
+      value: "Rs. 12,500",
+      tint: "green",
+      arrow: "down",
+    },
+    {
+      labelKey: "toGive" as TranslationKey,
+      subKey: "twoParties" as TranslationKey,
+      value: "Rs. 4,200",
+      tint: "red",
+      arrow: "up",
+    },
+    {
+      labelKey: "sales" as TranslationKey,
+      value: "Rs. 45,000",
+      tint: "neutral",
+    },
+    {
+      labelKey: "purchase" as TranslationKey,
+      value: "Rs. 18,300",
+      tint: "neutral",
+    },
+    {
+      labelKey: "expense" as TranslationKey,
+      value: "Rs. 6,800",
+      tint: "neutral",
+    },
+    {
+      labelKey: "totalBalance" as TranslationKey,
+      subKey: "cashBank" as TranslationKey,
+      value: "Rs. 32,500",
+      tint: "neutral",
+    },
+  ];
+
+  const resolvedCards = useMemo(() => {
+    return statCards.map((card) => ({
+      ...card,
+      label: t[card.labelKey],
+      sub: card.subKey ? t[card.subKey] : undefined,
+    }));
+  }, [lang, t]);
+
+  const LanguageSwitcher = () => (
+    <View style={styles.langSwitcher}>
+      <TouchableOpacity
+        style={[
+          styles.langOption,
+          lang === "english" && styles.langOptionActive,
+        ]}
+        onPress={() => changeLanguage("english")}
+      >
+        <Text
+          style={[
+            styles.langText,
+            lang === "english" && styles.langTextActive,
+          ]}
+        >
+          EN
+        </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={[
+          styles.langOption,
+          lang === "nepali" && styles.langOptionActive,
+        ]}
+        onPress={() => changeLanguage("nepali")}
+      >
+        <Text
+          style={[
+            styles.langText,
+            lang === "nepali" && styles.langTextActive,
+          ]}
+        >
+          ने
+        </Text>
+      </TouchableOpacity>
+    </View>
   );
 
   const headerStyle = useFadeSlide(0);
@@ -293,6 +365,7 @@ export default function HomeScreen() {
             <Ionicons name="wallet-outline" size={14} color="#92400e" />
             <Text style={styles.creditText}>1,250</Text>
           </TouchableOpacity>
+          {/*
           <TouchableOpacity activeOpacity={0.75} style={styles.notifBtn}>
             <Ionicons
               name="notifications-outline"
@@ -300,6 +373,8 @@ export default function HomeScreen() {
               color={theme.foreground}
             />
           </TouchableOpacity>
+            */}
+          <LanguageSwitcher />
         </View>
       </Animated.View>
 
@@ -323,7 +398,7 @@ export default function HomeScreen() {
 
         {/* ── Stat Cards Grid ── */}
         <Animated.View style={[styles.statGrid, statsStyle]}>
-          {statCards.map((card, i) => {
+          {resolvedCards.map((card, i) => {
             const isGreen = card.tint === "green";
             const isRed = card.tint === "red";
             const isNeutral = card.tint === "neutral";
@@ -376,7 +451,7 @@ export default function HomeScreen() {
 
         {/* ── Explore App / Top Shortcuts ── */}
         <Animated.View style={[styles.section, exploreStyle]}>
-          <Text style={styles.sectionTitle}>Explore App</Text>
+          <Text style={styles.sectionTitle}>{t.exploreApp}</Text>
           <View style={styles.topShortcutRow}>
             {topShortcuts.map((item) => (
               <TouchableOpacity
@@ -423,10 +498,10 @@ export default function HomeScreen() {
         {/* ── Shortcuts ── */}
         <Animated.View style={[styles.section, shortcutStyle]}>
           <View style={styles.sectionHeaderRow}>
-            <Text style={styles.sectionTitle}>Shortcuts</Text>
+            <Text style={styles.sectionTitle}>{t.shortcuts}</Text>
             <TouchableOpacity activeOpacity={0.7} style={styles.editMenuBtn}>
               <Ionicons name="create-outline" size={15} color={theme.primary} />
-              <Text style={styles.editMenuText}>Edit Menu</Text>
+              <Text style={styles.editMenuText}>{t.editMenu}</Text>
             </TouchableOpacity>
           </View>
 
@@ -477,7 +552,7 @@ export default function HomeScreen() {
           </View>
 
           <View style={styles.chartCard}>
-            <CashflowChart />
+            <CashflowChart t={t} />
           </View>
         </Animated.View>
       </ScrollView>
@@ -938,5 +1013,34 @@ const styles = StyleSheet.create({
     height: 3,
     borderRadius: 2,
     backgroundColor: theme.primary,
+  },
+  langSwitcher: {
+    flexDirection: "row",
+    backgroundColor: theme.backgroundElement,
+    borderRadius: 12,
+    padding: 2,
+    borderWidth: 1,
+    borderColor: theme.border,
+  },
+
+  langOption: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 10,
+  },
+
+  langOptionActive: {
+    backgroundColor: theme.primary,
+  },
+
+  langText: {
+    fontFamily: Fonts.sans,
+    fontSize: 12,
+    fontWeight: "700",
+    color: theme.mutedForeground,
+  },
+
+  langTextActive: {
+    color: theme.primaryForeground,
   },
 });
